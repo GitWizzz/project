@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Portal</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --error-color: #ea4335;
+            --light-color: #f5f5f5;
+            --dark-color: #333333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('https://placehold.co/1920x1080');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            max-width: 420px;
+            margin: 2rem auto;
+        }
+
+        .auth-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            color: var(--dark-color);
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark-color);
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-container input {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3367d6;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            color: #777;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .oauth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .btn-google {
+            background-color: white;
+            color: #5f6368;
+            border: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-google:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-google img {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.8rem;
+        }
+
+        #google-signin-btn {
+            width: 100%;
+            height: 42px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 1.5rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            input {
+                padding: 0.7rem 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <div class="logo-container">
+                <div class="logo">AuthPortal</div>
+                <div class="tagline">Secure access to your account</div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('signin')">Sign In</div>
+                <div class="tab" onclick="switchTab('signup')">Sign Up</div>
+            </div>
+
+            <div id="signin" class="tab-content active">
+                <form id="signin-form">
+                    <div class="form-group">
+                        <label for="signin-email">Email</label>
+                        <input type="email" id="signin-email" required placeholder="Enter your email">
+                        <div class="error-message" id="signin-email-error"></div>
+                    </div>
+
+                    <div class="form-group password-container">
+                        <label for="signin-password">Password</label>
+                        <input type="password" id="signin-password" required placeholder="Enter your password">
+                        <span class="toggle-password" onclick="togglePassword('signin-password')">👁️</span>
+                        <div class="error-message" id="signin-password-error"></div>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="remember-me">
+                            <label for="remember-me">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
+
+                <div class="divider">or</div>
+
+                <div id="google-signin-btn"></div>
+            </div>
+
+            <div id="signup" class="tab-content">
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" required placeholder="Enter your full name">
+                        <div class="error-message" id="signup-name-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required placeholder="Enter your email">
+                        <div class="error-message" id="signup-email-error"></div>
+                    </div>
+
+                    <div class="form-group password-container">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required placeholder="Create a password">
+                        <span class="toggle-password" onclick="togglePassword('signup-password')">👁️</span>
+                        <div class="error-message" id="signup-password-error"></div>
+                    </div>
+
+                    <div class="form-group password-container">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" required placeholder="Confirm your password">
+                        <span class="toggle-password" onclick="togglePassword('signup-confirm-password')">👁️</span>
+                        <div class="error-message" id="signup-confirm-password-error"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+
+                <div class="divider">or</div>
+
+                <div class="oauth-buttons">
+                    <div id="google-signup-btn"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle between sign in and sign up tabs
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+
+            // Update active tab style
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.toLowerCase() === (tabId === 'signin' ? 'sign in' : 'sign up')) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // Form validation for sign in
+        document.getElementById('signin-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+            
+            // Reset errors
+            document.querySelectorAll('#signin-form .error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            let isValid = true;
+
+            // Email validation
+            if (!email) {
+                document.getElementById('signin-email-error').textContent = 'Email is required';
+                document.getElementById('signin-email-error').style.display = 'block';
+                isValid = false;
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                document.getElementById('signin-email-error').textContent = 'Please enter a valid email';
+                document.getElementById('signin-email-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Password validation
+            if (!password) {
+                document.getElementById('signin-password-error').textContent = 'Password is required';
+                document.getElementById('signin-password-error').style.display = 'block';
+                isValid = false;
+            } else if (password.length < 6) {
+                document.getElementById('signin-password-error').textContent = 'Password must be at least 6 characters';
+                document.getElementById('signin-password-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                alert('Sign in successful!');
+                // Here you would typically make an API call to authenticate the user
+                this.reset();
+            }
+        });
+
+        // Form validation for sign up
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            
+            // Reset errors
+            document.querySelectorAll('#signup-form .error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            let isValid = true;
+
+            // Name validation
+            if (!name) {
+                document.getElementById('signup-name-error').textContent = 'Name is required';
+                document.getElementById('signup-name-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Email validation
+            if (!email) {
+                document.getElementById('signup-email-error').textContent = 'Email is required';
+                document.getElementById('signup-email-error').style.display = 'block';
+                isValid = false;
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                document.getElementById('signup-email-error').textContent = 'Please enter a valid email';
+                document.getElementById('signup-email-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Password validation
+            if (!password) {
+                document.getElementById('signup-password-error').textContent = 'Password is required';
+                document.getElementById('signup-password-error').style.display = 'block';
+                isValid = false;
+            } else if (password.length < 8) {
+                document.getElementById('signup-password-error').textContent = 'Password must be at least 8 characters';
+                document.getElementById('signup-password-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Confirm password validation
+            if (!confirmPassword) {
+                document.getElementById('signup-confirm-password-error').textContent = 'Please confirm your password';
+                document.getElementById('signup-confirm-password-error').style.display = 'block';
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                document.getElementById('signup-confirm-password-error').textContent = 'Passwords do not match';
+                document.getElementById('signup-confirm-password-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                alert('Account created successfully! Please check your email for verification.');
+                // Here you would typically make an API call to register the user
+                this.reset();
+                switchTab('signin');
+            }
+        });
+
+        // Initialize Google Sign-In
+        function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+                callback: handleCredentialResponse,
+                ux_mode: 'popup'
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('google-signin-btn'),
+                {
+                    type: 'standard',
+                    theme: 'outline',
+                    size: 'large',
+                    text: 'signin_with',
+                    shape: 'pill'
+                }
+            );
+
+            google.accounts.id.renderButton(
+                document.getElementById('google-signup-btn'),
+                {
+                    type: 'standard',
+                    theme: 'outline',
+                    size: 'large',
+                    text: 'signup_with',
+                    shape: 'pill'
+                }
+            );
+        }
+
+        function handleCredentialResponse(response) {
+            console.log('Google Auth Response:', response);
+            // Here you would typically verify the credential on your server
+            alert('Google authentication successful!');
+        }
+
+        window.onload = function() {
+            // Initialize Google Sign-In when the page loads
+            initializeGoogleSignIn();
+        };
+    </script>
+</body>
+</html>
